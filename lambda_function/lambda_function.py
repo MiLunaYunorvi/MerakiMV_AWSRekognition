@@ -1,10 +1,9 @@
-from operator import imod
 import boto3
 from meraki import snapshot,webex
 from time import sleep
 import json
 import requests
-from botocore.exceptions import ClientError
+
 
 client=boto3.client('rekognition')
 

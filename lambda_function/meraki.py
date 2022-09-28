@@ -7,6 +7,8 @@ import json
 
 api_key = ''
 mv_serial = ''
+token_bot = ''
+room_id = ''
 
 def snapshot():
     url = "https://api.meraki.com/api/v1/devices/{}/camera/generateSnapshot".format(mv_serial)
@@ -38,12 +40,12 @@ def webex(mensaje):
     url_webex = "https://webexapis.com/v1/messages"
     mensaje_f = formato_webex(mensaje)
     payload = json.dumps({
-    "roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vOWQ4NmVlNzAtMWE3ZS0xMWVjLTliNzAtNTM1NjYyZTVkYzIz",
+    "roomId": room_id,
     "text": mensaje_f
     #"files": ["{}".format(url)]
     })
     headers = {
-    'Authorization': 'Bearer YTg4OTVmYjktNWFkZS00YzA4LWFkNWItMjE5YTJkZDM1MjNmY2ZjOTFlZGItYmE1_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f',
+    'Authorization': 'Bearer {}'.format(token_bot),
     'Content-Type': 'application/json'
     }
     requests.request("POST", url_webex, headers=headers, data=payload)
