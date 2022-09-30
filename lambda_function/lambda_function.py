@@ -4,17 +4,18 @@ from time import sleep
 import json
 import requests
 
-
 client=boto3.client('rekognition')
-
 global estado
 
 def delete_faces(lista):
-    client=boto3.client('rekognition')
-    response = client.delete_faces(
-    CollectionId='First_collection',
-    FaceIds= lista)
-    print("Borrado exitoso")
+    try:
+        client=boto3.client('rekognition')
+        response = client.delete_faces(
+        CollectionId='First_collection',
+        FaceIds= lista)
+        print("Borrado exitoso")
+    except:
+        pass
     
 def listar_faces():
     client=boto3.client('rekognition')
@@ -69,22 +70,25 @@ def search_faces(bytes):
 
 def search_faces_by_id(listaIds):
     global estado
+    client=boto3.client('rekognition')
     print("Buscando match para los rostros encontrados")
     personas = []
     if listaIds != []:
         for id in listaIds:
             response = client.search_faces(CollectionId='First_collection',FaceId=id, MaxFaces=1, FaceMatchThreshold=60)
-            print(response )
+            print(response)
             if response['FaceMatches'] != []:    
                 faceMatched = response['FaceMatches'][0]['Face']['ExternalImageId']
                 similarity = response['FaceMatches'][0]['Similarity']
                 personas.append([faceMatched, similarity])
                 print(faceMatched,similarity)
                 estado = "Se encontró similitud"
-                webex(personas)
+                mensaje_f = formato_webex(mensaje)
+                webex(mensaje_f)
             else:
-                personas = "Hay rostros, pero no se encontró match"
+                personasno = "Hay rostros, pero no se encontró match"
                 estado = "Index detectó rostros, pero no hay match con alguno"
+                webex(personasno)
         delete_faces(listaIds)
     return personas                            
 
@@ -94,7 +98,7 @@ def index_faces(bytes):
     face_id_list = [] 
     try:
         response = client.index_faces(CollectionId='First_collection', Image = {'Bytes': bytes},
-        ExternalImageId='grupales', DetectionAttributes=['DEFAULT'], MaxFaces=5, QualityFilter='AUTO') 
+        ExternalImageId='grupales', DetectionAttributes=['DEFAULT'], MaxFaces=5, QualityFilter='MEDIUM') 
         print(response)
         FaceRecords = response['FaceRecords']
         if FaceRecords != []:
@@ -108,8 +112,8 @@ def index_faces(bytes):
             print("No se detectaron rostros")
             estado = "No hay rostros en la imagen"
     except:
-        print("Error en Index_faces")
         estado = "Error en Index_faces"
+        delete_faces(face_id_list)
         pass
 
 def lambda_handler(event, context):
@@ -121,4 +125,3 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'body': json.dumps(mensaje)}
-
