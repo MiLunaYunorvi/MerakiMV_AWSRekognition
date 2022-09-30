@@ -5,19 +5,25 @@ from PIL import Image
 from io import BytesIO
 import json
 
-global url_snap
+############### PARAMETROS PARA LLENAR ##############################
+api_key = ''
+mv_serial = ''
+token_bot = ''
+room_id = ''
+COLLECT_NAME = 'ROSTROS'  #cambiar el nombre si se uso uno diferente al momento de crear la colección
+######################################################################
 
+global url_snap
 def snapshot():
     global url_snap
-    url = "https://api.meraki.com/api/v1/devices/Q2GV-2V9V-NMDF/camera/generateSnapshot"
+    url = "https://api.meraki.com/api/v1/devices/{}/camera/generateSnapshot".format(mv_serial)
     payload = '''{
-        "timestamp": "2022-09-29T10:39:31Z",
-        "fullframe": false
+        "fullframe": true
     }'''
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "X-Cisco-Meraki-API-Key": "771d04c7ce12516c5146a80cc17826d53bebc706"
+        "X-Cisco-Meraki-API-Key": api_key
     }
     response = requests.request('POST', url, headers=headers, data = payload)
     print(response.json())
@@ -41,12 +47,12 @@ def webex(mensaje):
     global url_snap
     url_webex = "https://webexapis.com/v1/messages"
     payload = json.dumps({
-    "roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vOWQ4NmVlNzAtMWE3ZS0xMWVjLTliNzAtNTM1NjYyZTVkYzIz",
+    "roomId": room_id,
     "text": mensaje,
     "files": [url_snap]
     })
     headers = {
-    'Authorization': 'Bearer YTg4OTVmYjktNWFkZS00YzA4LWFkNWItMjE5YTJkZDM1MjNmY2ZjOTFlZGItYmE1_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f',
+    'Authorization': 'Bearer {}'.format(token_bot),
     'Content-Type': 'application/json'
     }
     response = requests.request("POST", url_webex, headers=headers, data=payload)

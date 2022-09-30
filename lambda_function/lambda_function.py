@@ -1,5 +1,6 @@
 import boto3
 from meraki import snapshot,webex
+from meraki import COLLECT_NAME
 from time import sleep
 import json
 import requests
@@ -11,7 +12,7 @@ def delete_faces(lista):
     try:
         client=boto3.client('rekognition')
         response = client.delete_faces(
-        CollectionId='First_collection',
+        CollectionId = COLLECT_NAME,
         FaceIds= lista)
         print("Borrado exitoso")
     except:
@@ -20,7 +21,7 @@ def delete_faces(lista):
 def listar_faces():
     client=boto3.client('rekognition')
     response = client.list_faces(
-        CollectionId='First_collection',
+        CollectionId= COLLECT_NAME,
         MaxResults=10)
     print(response['Faces'])
     for i in response['Faces']:
@@ -46,7 +47,7 @@ def search_faces(bytes):
     client=boto3.client('rekognition')
     threshold = 40
     try:
-        response=client.search_faces_by_image(CollectionId='First_collection',
+        response=client.search_faces_by_image(CollectionId=COLLECT_NAME,
                                     Image={'Bytes': bytes},
                                     FaceMatchThreshold=threshold,
                                     MaxFaces= 3)
@@ -75,7 +76,7 @@ def search_faces_by_id(listaIds):
     personas = []
     if listaIds != []:
         for id in listaIds:
-            response = client.search_faces(CollectionId='First_collection',FaceId=id, MaxFaces=1, FaceMatchThreshold=60)
+            response = client.search_faces(CollectionId=COLLECT_NAME,FaceId=id, MaxFaces=1, FaceMatchThreshold=60)
             print(response)
             if response['FaceMatches'] != []:    
                 faceMatched = response['FaceMatches'][0]['Face']['ExternalImageId']
@@ -97,7 +98,7 @@ def index_faces(bytes):
     print("Buscando rostros en la imagen")
     face_id_list = [] 
     try:
-        response = client.index_faces(CollectionId='First_collection', Image = {'Bytes': bytes},
+        response = client.index_faces(CollectionId=COLLECT_NAME, Image = {'Bytes': bytes},
         ExternalImageId='grupales', DetectionAttributes=['DEFAULT'], MaxFaces=5, QualityFilter='MEDIUM') 
         print(response)
         FaceRecords = response['FaceRecords']
