@@ -10,7 +10,7 @@ api_key = ''
 mv_serial = ''
 token_bot = ''
 room_id = ''
-COLLECT_NAME = 'ROSTROS'  #cambiar el nombre si se uso uno diferente al momento de crear la colección
+collect_name = 'ROSTROS'  #cambiar el nombre si se uso uno diferente al momento de crear la colección
 ######################################################################
 
 global url_snap
